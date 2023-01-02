@@ -1,0 +1,274 @@
+查詢 SQL1 
+逐筆
+
+	IF Substr(R_Badapr_Rec.Payno, 1, 1) = '5' Or
+				   R_Badapr_Rec.Payno In ('35', '37', '38') Then
+
+
+		查詢 SQL2
+		逐筆
+			新增 bansf
+
+			IF R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+				新增 bansf
+
+
+			IF R_Source_Badapr_Rec.Seqno = '0000' AND
+									   Substr(R_Badapr_Rec.Payno, 1, 1) = '3' AND
+									   R_Baappbase_Rec.Evtdiedate IS NOT NULL THEN
+
+				新增 bansf_TEMP
+
+
+			If R_Badapr_Rec.Nachgmk In ('A', 'B') and
+								   f_data(R_Badapr_Rec.Apno,
+										  R_Badapr_Rec.Payym) > 0 Then
+				新增 BADAPR_REF_ERRL
+
+
+		若 SQL2 查無資料
+
+			逐筆 SQL3
+
+				If V_Out_Temp_Cnt = 0 Then
+					
+					新增 bansf
+
+
+				IF R_Source_Baappbase_Rec.Evtdiedate IS NOT NULL AND
+								   Substr(R_Badapr_Rec.Payno, 1, 1) = '3' THEN
+					新增 bansf_TEMP
+
+
+				IF R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+					--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+					新增 bansf
+
+
+				--異常資料建入badapr_ref_errl
+				If R_Badapr_Rec.Nachgmk In ('A', 'B') And
+				   F_Data(R_Badapr_Rec.Apno, R_Badapr_Rec.Payym) > 0 Then
+					--當存在普職互改註記時,
+					--找尋同給付月份,且Nachgmk為NULL的資料,當資料不存在,則異常資料建入badapr_ref_errl
+					新增  Badapr_Ref_Errl
+
+
+				If R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+								--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+								
+					新增  BADAPR_REF 
+
+
+			If V_Str = 'N' Then
+				--找尋不到原資料,寫入異常
+				新增  Badapr_Ref_Errl
+
+
+
+
+			新增 bansf
+
+
+
+			IF SUBSTR(R_Badapr_Rec.Payno, 1, 1) = '3' AND nvl(v_Evtdiedate,' ') <> ' ' THEN
+				新增 bansf_TEMP
+
+
+			IF (Substr(R_Badapr_Rec.Payno, 1, 1) = '5' Or
+			   R_Badapr_Rec.Payno In ('35', '37', '38')) and
+			   f_bansfcount(r_badapr_rec.Apno,
+									r_badapr_rec.Payym,
+									R_Badapr_Rec.Suprecmk) > 0 Then
+
+				更新 BANSF
+
+
+
+
+
+SQL1 = 
+				select *
+			  from (SELECT TO_CHAR(ISSUYM + 191100) AS ISSUYM,
+						   TO_CHAR(PAYYM + 191100) AS PAYYM,
+						   NULL AS NBAPNO,
+						   UPPER(APNO) AS APNO,
+						   PAYNO,
+						   UBNO AS UBNO,
+						   EVTBRDATE,
+						   EVTIDNNO,
+						   EDATE,
+						   SEX,
+						   EVTYPE,
+						   ADWKMK,
+						   CASE WHEN FIRSTPAY IS NULL THEN'0'  ELSE	FIRSTPAY END AS FIRSTPAY, --首發註記
+						   PAMTS,
+						   OTHERAMT AS DEDUCT,
+						   PAYCNT,
+						   EVCODE,
+						   INJNO,
+						   INJCL,
+						   PAYDAY,
+						   CASE  WHEN SUPRECMK IS NULL THEN '1' ELSE SUPRECMK END AS SUPRECMK, --補發收回註記
+						   NACHGMK,
+						   '0' AS PWAGE,
+						   NULL AS APPDATE,
+						   NULL AS NITRMY,
+						   NULL NITRMM
+					  From Bansf_Ref                --BANSF_REF媒體檔匯入
+					 Where P_Payym = '201208'
+					   AND ISSUYM + 191100 < '201312'
+					UNION ALL
+					SELECT TO_CHAR(ISSUYM + 191100) AS ISSUYM,
+						   TO_CHAR(PAYYM + 191100) AS PAYYM,
+						   NULL AS NBAPNO,
+						   UPPER(APNO) AS APNO,
+						   PAYNO,
+						   UBNO AS UBNO,
+						   EVTBRDATE,
+						   EVTIDNNO,
+						   EDATE,
+						   SEX,
+						   EVTYPE,
+						   ADWKMK,
+						   CASE WHEN FIRSTPAY IS NULL THEN '0'ELSE FIRSTPAY END AS FIRSTPAY,
+						   PAMTS,
+						   OTHERAMT AS DEDUCT,
+						   PAYCNT,
+						   EVCODE,
+						   INJNO,
+						   INJCL,
+						   PAYDAY,
+						   CASE WHEN SUPRECMK IS NULL THEN '1' ELSE SUPRECMK END AS SUPRECMK,
+						   NACHGMK,
+						   '0' AS PWAGE,
+						   NULL AS APPDATE,
+						   NULL AS NITRMY,
+						   NULL NITRMM
+					  From Bansf_Ref
+					 Where P_Payym <> '201208'
+					   AND ISSUYM + 191100 = P_PAYYM
+					UNION ALL
+					Select To_Char(Issuym + 191100) As Issuym,
+						   To_Char(Payym + 191100) As Payym,
+						   NBAPNO AS NBAPNO,
+						   UPPER(APNO) AS APNO,
+						   Payno,
+						   Null As Ubno,
+						   Evtbrdate,
+						   Evtidnno,
+						   Null As Edate,
+						   NULL As Sex,
+						   '3' As Evtype,
+						   '1' As Adwkmk,
+						   To_Char(Firstpay) As Firstpay,
+						   Pamts,
+						   Null As Deduct,
+						   Null As Paycnt,
+						   Null As Evcode,
+						   Null As Injno,
+						   Null As Injcl,
+						   0 As Payday,
+						   CASE WHEN SUPRECMK IS NULL THEN '1'ELSE SUPRECMK
+						   END AS SUPRECMK,
+						   Null As Nachgmk,
+						   Pwage,
+						   Appdate,
+						   To_Char(Year_Rang) As Nitrmy,
+						   To_Char(Mon_Rang) As Nitrmm
+					  From Bansf_Ref_36
+					 Where P_Payym = '201208'
+					   AND ISSUYM + 191100 < '201312'
+					UNION ALL
+					Select To_Char(Issuym + 191100) As Issuym,
+						   To_Char(Payym + 191100) As Payym,
+						   NBAPNO AS NBAPNO,
+						   UPPER(APNO) AS APNO,
+						   Payno,
+						   Null As Ubno,
+						   Evtbrdate,
+						   Evtidnno,
+						   Null As Edate,
+						   NULL As Sex,
+						   '3' As Evtype,
+						   '1' As Adwkmk,
+						   To_Char(Firstpay) As Firstpay,
+						   Pamts,
+						   Null As Deduct,
+						   Null As Paycnt,
+						   Null As Evcode,
+						   Null As Injno,
+						   Null As Injcl,
+						   0 As Payday,
+						   CASE WHEN SUPRECMK IS NULL THEN '1'ELSE SUPRECMK
+						   END AS SUPRECMK,
+						   Null As Nachgmk,
+						   Pwage,
+						   Appdate,
+						   To_Char(Year_Rang) As Nitrmy,
+						   To_Char(Mon_Rang) As Nitrmm
+					  From Bansf_Ref_36
+					 Where P_Payym <> '201208'
+					   AND ISSUYM + 191100 = P_PAYYM) A
+			 Order By (case
+						  when payno = '37' then   --給付種類(paykind)
+						   '1'
+						  when payno = '36' then
+						   '2'
+						  when payno in ('55', '56', '58', '59') then
+						   '3'
+						  when payno in ('35', '38') then
+						   '4'
+						  else
+						   '5'
+					  end),
+					  (Case
+						  When (Suprecmk is Null or suprecmk = '1') then
+						   '0'
+						  when Suprecmk = 'C' Then
+						   '1'
+						  Else
+						   '2'
+					  End),
+					  (case
+						  when Nachgmk in ('A', 'B') then  --普職互改註記
+						   '1'
+						  else
+						   '0'
+					  end),
+					  Apno,
+					  issuym,
+					  Payym;
+
+
+SQL2 = 
+	select *
+			  from (SELECT *
+					  FROM BADAPR
+					 WHERE APNO = S_KEY_APNO
+					   AND PAYYM = S_PAYYM
+					   And Mtestmk = 'F'
+					   And Aplpaymk = '3'
+					   AND SEQNO = '0000'
+					   and ((S_SUPRECMK is null and Suprecmk is null) or
+						   Suprecmk =
+						   decode(S_SUPRECMK, 'K', 'D', S_SUPRECMK))
+					   and paykind = S_PAYNO
+					 Order By (Case
+								  When 'C' Is Not Null And Suprecmk = 'C' Then
+								   '1'
+								  Else
+								   '2'
+							  End),
+							  Apno,
+							  issuym desc,
+							  Payym,
+							  Seqno) A
+			 where rownum < 2
+
+
+SQL3=
+		SELECT *
+			  From Baappbase
+			 Where Apno = S_Key_Apno
+			   AND SEQNO = '0000'
+			 Order By Apno, Payym, Seqno

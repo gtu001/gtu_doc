@@ -1,0 +1,42 @@
+Panic in the crypto market has Janet Yellen's attention
+
+A version of this story first appeared in CNN Business' Before the Bell newsletter. Not a subscriber? You can sign up right here. You can listen to an audio version of the newsletter by clicking the same link.
+London (CNN Business)Investors in stocks, bonds and commodities are all on edge right now. But in the market for cryptocurrencies, unease has morphed into full-on panic, catching the attention of regulators in Washington tasked with maintaining financial stability.
+
+What's happening: As of last Friday, the price of bitcoin had plunged almost 50% from its all-time high as traders — concerned about whether the Federal Reserve's bid to fight inflation could tip the economy into a recession — dumped riskier investments.
+But in recent days, the implosion of TerraUSD, a high-profile crypto experiment, has fueled a deeper anxiety. On Thursday, Tether — a popular "stablecoin" billed as a safe place for crypto investors to park their cash — broke its peg to the US dollar, unleashing further alarm. The price of bitcoin fell as low as $26,350.
+
+"If we see this continue for multiple days, then we'll start to get pretty concerned, pretty worried," Marcus Sotiriou, a crypto analyst at digital asset broker GlobalBlock, told me. "The implications are just so large. It's just unknown."
+Breaking it down: Making sense of the situation requires a quick primer on stablecoins and their wilder offshoot, algorithmic stablecoins.
+Traditional stablecoins like Tether have become the bedrock of the crypto market, since they're theoretically fully backed by hard assets. One digital coin can be redeemed at any point in time for $1, serving as a hedge against volatility. Given the market's notorious swings, their use among crypto companies, exchanges and traders has shot up.
+The Federal Reserve estimates that the value of stablecoins "grew rapidly over the past year," topping $180 billion in March.
+The boom helped spur the rise of algorithmic stablecoins like TerraUSD. These coins are technically worth $1, too. But they aren't backed by hard assets, and instead use financial engineering to maintain their peg.
+The entire sub-industry has worried experts, including the Fed. In a report published earlier this month, the central bank said there's little clarity on what really backs stablecoins, and noted that a few big players dominate a market with little oversight. A loss of confidence, then, could trigger a devastating run, which could in turn tank confidence in the entire digital economy.
+It's not clear that's what's happening now. But as stablecoins churn, that is the risk.
+TerraUSD first wavered and broke its peg to the US dollar last weekend. It fell as low as 23 cents on Wednesday before recovering some ground. It was last trading at 58 cents after its creators announced an emergency intervention.
+"This is exactly the 'death spiral' a lot of people predicted," Henry Elder, head of decentralized finance at Wave Financial, a digital asset manager, told me.
+Tether was last below 99 cents to the dollar, dragging down bitcoin, too. The most popular cryptocurrency — which has buy-in from a growing number of traditional investors — has plummeted 10% in the past 24 hours.
+Why it matters: This may seem very in the weeds. Crypto assets, after all, continue to make up a very small part of the broader financial system. But powerful people like Treasury Secretary Janet Yellen are paying attention, fearful that the situation could create nasty and unpredictable aftershocks for investors of all stripes.
+"A stablecoin known as TerraUSD experienced a run and had declined in value," Yellen said when she testified before the Senate earlier this week. "I think that simply illustrates that this is a rapidly growing product and that there are risks to financial stability."
+Inflation slowed, but pressure on prices isn't going away
+At first glance, the latest report on US inflation appeared to contain some good news.
+The latest: Consumer prices in the year to April rose 8.3% — down slightly from March, when inflation rose at the fastest clip in four decades.
+But digging into the data, it looked less reassuring. Stripping out volatile food and energy prices, core inflation rose 0.6% month-over-month, indicating that costs are rising across a wide range of products.
+That's making economists and investors nervous.
+"Inflation is no longer contained to the supply chain," Jefferies chief economist Aneta Markowska said.
+Businesses have been building up their inventories, which helps ease inflation for goods. But prices in the services sector are jumping as Americans resume travel and other leisure activities.
+"This is the inflation story to worry about: core services inflation has increased for four straight months," economist Jason Furman tweeted, noting that services are a much bigger input than goods when calculating the Consumer Price Index.
+Investor insight: The news spooked Wall Street, sending the S&P 500 down 1.7%. The index is now 18% below its all-time high notched in January.
+Investors were unnerved that the inflation reading was worse than predicted. Economists polled by Refinitiv had expected annual inflation of 8.1%. That could compel the Federal Reserve to continue its aggressive pullback of support for the economy for even longer, hurting riskier bets.
+Disney avoided Netflix's fate. But it's not all good news
+The question has dogged Disney (DIS) ever since Netflix (NFLX) reported its first loss of subscribers in over a decade: If people are cutting back on expenses, will they start bailing on Disney+, too?
+So far, that doesn't seem to be the case. Disney said Wednesday that its flagship streaming service added nearly 8 million subscribers in its most recent quarter, avoiding Netflix's bad fortune.
+"The growth of the platform since its launch reinforces its unique nature," CEO Bob Chapek said on a call with analysts. "Quite simply, we believe Disney+ is one of a kind."
+Hulu and ESPN+ grew last quarter, too. The company's services now have almost 206 million users.
+Chapek said Disney+ is still on track to net between 230 million to 260 million subscribers by mid-2024.
+That said: Shares of Disney initially rose after the report, but are now more than 5% lower in premarket trading.
+One concern? Disney is spending big to keep growing. The company's direct-to-consumer unit lost $887 million last quarter — more than triple losses from one year ago. Disney blamed "higher programming and production, marketing and technology costs."
+Up next
+Six Flags (SIX), Tapestry (TPR) and Utz Brands report results before US markets open. Poshmark and Wheels Up follow after the close.
+Also today: The US Producer Price Index for April posts at 8:30 a.m. ET.
+Coming tomorrow: The University of Michigan's consumer sentiment survey for May.

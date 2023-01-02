@@ -1,0 +1,62 @@
+private static class FormulaReadCellHelper {
+		final DecimalFormat df = new DecimalFormat("####################0.##########");
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+		Workbook wb;
+		FormulaEvaluator evaluator;
+
+		FormulaReadCellHelper(Workbook wb) {
+			this.wb = wb;
+			this.evaluator = wb.getCreationHelper().createFormulaEvaluator();
+		}
+
+		private String getCellStringValue(Cell cell) {
+			String cellValue = "";
+			if (cell == null) {
+				System.out.println("cell null");
+				return "";
+			}
+			switch (cell.getCellType()) {
+			case Cell.CELL_TYPE_STRING:// 字串型別
+				cellValue = cell.getStringCellValue();
+				if (cellValue == null || cellValue.trim().equals("") || cellValue.trim().length() <= 0) {
+					cellValue = "";
+				}
+				break;
+			case Cell.CELL_TYPE_NUMERIC:// 數值型別
+				if (HSSFDateUtil.isCellDateFormatted(cell)) {
+					return sdf.format(cell.getDateCellValue());
+				}
+				cellValue = String.valueOf(cell.getNumericCellValue());
+				break;
+			case Cell.CELL_TYPE_FORMULA:// 公式
+				try {
+					CellValue cellVal = evaluator.evaluate(cell);
+					switch (cellVal.getCellType()) {
+					case Cell.CELL_TYPE_STRING:// 字串型別
+						cellValue = cellVal.getStringValue();
+						if (cellValue == null || cellValue.trim().equals("") || cellValue.trim().length() <= 0) {
+							cellValue = "";
+						}
+						break;
+					case Cell.CELL_TYPE_NUMERIC:// 數值型別
+						cellValue = String.valueOf(cellVal.getNumberValue());
+						break;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				break;
+			case Cell.CELL_TYPE_BLANK:
+				cellValue = "";
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				break;
+			case Cell.CELL_TYPE_ERROR:
+				break;
+			default:
+				break;
+			}
+			return cellValue;
+		}
+	}

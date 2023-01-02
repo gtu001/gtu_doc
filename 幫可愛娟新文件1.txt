@@ -1,0 +1,581 @@
+查 C_BANSF_REF -> r_bansf_rec_rec
+
+逐筆
+
+	R_Badapr_Rec.Seqno = 0000
+
+	R_Badapr_Rec.Injdp = F_Injdp(r_bansf_rec_rec.Injdp)
+
+	--'補發收回註記';
+	If R_Bansf_Rec_Rec.Suprecmk = '1' Then
+		R_Badapr_Rec.Suprecmk := Null;
+	Else
+		R_Badapr_Rec.Suprecmk := R_Bansf_Rec_Rec.Suprecmk;
+	End If;
+
+
+	If R_Badapr_Rec.Payno = '37' And
+		R_Badapr_Rec.Suprecmk = 'D' THEN
+		V_Samt = 累加 R_Badapr_Rec.Pamts;
+	END IF;
+
+	if R_Badapr_Rec.Payno = 37 then
+		if R_Badapr_Rec.Suprecmk = K Then
+			R_Badapr_Rec.Paycnt = -1
+
+		if R_Badapr_Rec.Suprecmk = K then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Suprecmk = 'C' AND V_Samt = 0 Then
+			R_Badapr_Rec.Paycnt = 1
+
+		if R_Badapr_Rec.Suprecmk = 'C' AND V_Samt <> 0 Then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Suprecmk = 'D' AND V_Samt = 0 Then
+			R_Badapr_Rec.Paycnt = -1
+
+		if R_Badapr_Rec.Suprecmk = 'D' AND V_Samt <> 0 Then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Suprecmk = 'D' AND R_Badapr_Rec.Pamts > 0 Then
+			R_Badapr_Rec.Paycnt = 1
+		
+		if R_Badapr_Rec.Suprecmk = 'D' AND R_Badapr_Rec.Pamts <=> 0 Then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Suprecmk = C, D then
+			R_Badapr_Rec.Paycnt = 0
+
+		if V_Apno = R_Badapr_Rec.Apno and V_Iisuym = R_Badapr_Rec.Issuym then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Nachgmk IN ('A', 'B') then
+			R_Badapr_Rec.Paycnt = 0
+
+		if R_Badapr_Rec.Pamts > 0 then
+			R_Badapr_Rec.Paycnt = 1
+
+		else 
+			R_Badapr_Rec.Paycnt = 0
+
+
+	if R_Badapr_Rec.Payno = '37' And
+					R_Badapr_Rec.Suprecmk = 'D' Then
+		V_Samt = 累加 R_Badapr_Rec.Pamts
+
+	if  r_bansf_rec_rec.adwkmk = '+'  then
+		R_Badapr_Rec.Adwkmk = '2'
+
+	if  r_bansf_rec_rec.adwkmk = null then
+		R_Badapr_Rec.Adwkmk = '1'
+
+	if r_bansf_rec_rec.Adwkmk = '2' then
+		V_Key_Intyp = V
+	else 
+		V_Key_Intyp = L
+
+	V_Key_Apno := R_Badapr_Rec.Apno
+
+
+	IF Substr(R_Badapr_Rec.Payno, 1, 1) = '5' Or
+				   R_Badapr_Rec.Payno In ('35', '37', '38') Then
+
+
+		查 C_BAdapr_Suprecmk -> R_Source_Badapr_Rec
+		逐筆
+			If R_Source_Badapr_Rec.Aplpaydate Is Not Null Then
+				R_Badapr_Rec.Paydate = C_BADAPR_SUPRECMK_PAYDATE(R_Badapr_Rec.Apno,
+																			  R_Badapr_Rec.Issuym,
+																			  R_Badapr_Rec.Payym,
+																			  R_Badapr_Rec.Suprecmk,
+																			  R_Badapr_Rec.Payno,
+																			  R_Badapr_Rec.Paydate)
+
+
+			R_Badapr_Rec.NITRMY  := R_Source_Badapr_Rec.NITRMY; --'勞保投保年資(年-年金制)';
+			R_Badapr_Rec.Nitrmm  := R_Source_Badapr_Rec.Nitrmm; --'勞保投保年資(月-年金制)';
+			R_Badapr_Rec.Pwage   := R_Source_Badapr_Rec.Insavgamt; --'平均薪資';
+			R_Badapr_Rec.Mchktyp := R_Source_Badapr_Rec.Mchktyp;
+
+			if r_bansf_rec_rec.Firstpay = '1' then 
+				R_Badapr_Rec.Mchktyp := '1'
+			if R_Source_Badapr_Rec.Mchktyp = '3' then
+				R_Badapr_Rec.Mchktyp := '3'
+			if R_Badapr_Rec.Suprecmk = 'C' then
+				R_Badapr_Rec.Mchktyp := '5'
+			else 
+				R_Badapr_Rec.Mchktyp := '2'
+
+
+
+			R_Badapr_Rec.Oldab        := R_Source_Badapr_Rec.Oldab; --'第一式/第二式';
+			R_Badapr_Rec.Oldaamt      := R_Source_Badapr_Rec.Oldaamt; --'第一式金額(勞保給付金額)';
+			R_Badapr_Rec.Oldbamt      := R_Source_Badapr_Rec.Oldbamt; --'第二式金額(勞保給付金額)';
+			R_Badapr_Rec.Qualcount    := R_Source_Badapr_Rec.Qualcount; --'符合眷屬(遺屬)人數';
+			R_Badapr_Rec.Annuamt      := Nvl(R_Source_Badapr_Rec.Annuamt,
+														 0); --'累計已領年金金額';
+			R_Badapr_Rec.CUTAMT       := nvl(R_Source_Badapr_Rec.REMAINAMT,
+												0); --'應扣失能金額';
+			R_Badapr_Rec.Lecomamt     := nvl(R_Source_Badapr_Rec.Lecomamt,
+												0); --'己扣失能金額';
+			R_Badapr_Rec.Oldextrarate := R_Source_Badapr_Rec.Oldextrarate; --(老年、遺屬)展延/減額比率
+			V_Key_Baappbaseid         := R_Source_Badapr_Rec.Baappbaseid; --給付主檔資料編號
+
+			If R_Source_Badapr_Rec.Seqno = '0000' Then
+				V_Str           = 'Y';
+				V_Out_Temp_Cnt  = 0;
+				R_Baappbase_Rec = Null;
+				V_Key_Seqno     = R_Source_Badapr_Rec.Seqno;
+
+				P_Read_Baappbase <---執行procedure
+
+				If Sw_Found = False Then
+					P_Read_Baappbase_D;
+				End If;
+				R_Badapr_Rec.Seqno := R_Source_Badapr_Rec.Seqno; --'序號';
+				Update_Data;
+			Else
+				-- 新增眷屬資料
+				V_Out_temp_Cnt     = V_Out_temp_Cnt + 1;
+				R_Badapr_Rec.Seqno = R_Source_Badapr_Rec.Seqno;
+				R_Baappbase_Rec    = Null;
+				V_Key_Seqno        = R_Badapr_Rec.Seqno;
+
+				P_Read_Baappbase;  <---執行procedure
+
+				If Sw_Found = False Then
+					P_Read_Baappbase_D;
+				End If;
+
+				Update_Data; <---執行procedure
+
+				If V_Out_Temp_Cnt <> 1 Then
+					R_Badapr_Rec.pamts = 0; --僅第一筆眷屬寫入全數金額
+				end if
+			End If
+
+			--取得cipb
+			P_Read_Cipb; <---執行procedure
+
+			R_Badapr_Rec.Hbedmk = R_Cipb_Rec.Hbedmk; --'年金施行前有無保險年資';
+
+			If V_Str = 'Y' Then
+				--有存在seqno=0000才寫入眷屬
+				if R_Badapr_Rec.Evtype = '1' then
+					V_Str := '3'
+				if R_Badapr_Rec.Evtype = '2' then
+					V_Str := '4'
+				if R_Badapr_Rec.Evtype = '3' then
+					V_Str := '1'
+				else 
+					V_Str := '2'
+
+				/*不分給付種類(36除外) 皆用BAAPPBASE.APITEM申請項目判斷
+				項目=7,8  退休條件給"2"-領取失能年金及老年年金中途死亡者
+				項目=9    退休條件給"1"-符合退休條件者
+				其餘      退休條件給"0"-尚未符合退休條件者
+				但給付種類=36 給 " "-空白*/
+
+				if R_Badapr_Rec.Payno = '36' then
+					V_Cat := Null;
+				if R_Badapr_Rec.Apitem In ('7', '8') then
+					V_Cat := 2;
+				if R_Badapr_Rec.Apitem = '9' then
+					V_Cat := 1;
+				else
+					V_Cat := 0;
+
+
+
+				IF SW_FOUND = TRUE THEN
+					IF V_Out_Temp_Cnt = 0 Then
+						--僅seqno=0000才新增至年金統計檔
+						V_Out_Cnt := V_Out_Cnt + 1;
+
+						Insert Into bansf
+
+						IF R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+							--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+							V_Out_Cnt := V_Out_Cnt + 1;
+
+							INSERT INTO bansf
+
+						
+						IF R_Source_Badapr_Rec.Seqno = '0000' AND
+							Substr(R_Badapr_Rec.Payno, 1, 1) = '3' AND
+							R_Baappbase_Rec.Evtdiedate IS NOT NULL THEN
+
+							Insert Into bansf_TEMP
+
+
+					If R_Badapr_Rec.Nachgmk In ('A', 'B') and
+						f_data(R_Badapr_Rec.Apno,
+								R_Badapr_Rec.Payym) > 0 Then
+						--當存在普職互改註記時,
+						--找尋同給付月份,且Nachgmk為NULL的資料,當資料不存在,則異常資料建入badapr_ref_errl
+						INSERT INTO BADAPR_REF_ERRL
+							SELECT R_BADAPR_REC.APNO,
+									R_BADAPR_REC.PAYYM,
+									V_STR,
+									R_BADAPR_REC.PAMTS,
+									'為普職註記,但找不到正常本月資料'
+								FROM DUAL;
+					END IF;
+
+					INSERT INTO BADAPR_REF VALUES R_BADAPR_REC;
+					IF R_BADAPR_REC.NACHGMK IN ('A', 'B') THEN
+						--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+						R_Badapr_Rec.PAYcnt := R_Badapr_Rec.PAYcnt * -1;
+						R_BADAPR_REC.PAMTS  := R_BADAPR_REC.PAMTS * -1;
+						R_BADAPR_REC.EVTYPE := V_STR;
+						INSERT INTO BADAPR_REF
+						VALUES R_BADAPR_REC;
+					END IF;
+
+				V_Str := 'Y'; --中間有更動,回寫為正常值
+
+			else 
+				V_Str := 'N';
+
+		迴圈結束
+
+		If V_Str = 'N' Then
+			--找尋不到原資料,寫入異常
+			Insert Into Badapr_Ref_Errl
+				Select R_Badapr_Rec.Apno,
+						R_Badapr_Rec.Payym,
+						R_Badapr_Rec.Evtype,
+						R_Badapr_Rec.Pamts,
+						'在BADAPR找不到資料'
+					From Dual;
+		END IF;
+
+
+
+
+		若 C_BAdapr_Suprecmk 查無資料
+
+			查 C_Baappbase 給 R_Source_Baappbase_Rec 
+			逐筆
+				R_Badapr_Rec.Pwage := R_Bansf_Rec_Rec.PWAGE; --'平均薪資';
+
+				if r_bansf_rec_rec.Firstpay = 1 then
+					R_Badapr_Rec.Mchktyp = 1
+				if R_Source_Baappbase_Rec.CASETYP = 3 then 
+					R_Badapr_Rec.Mchktyp = 3
+				if R_Source_Baappbase_Rec.CASETYP = 5 then 
+					R_Badapr_Rec.Mchktyp = 5
+				else 
+					R_Badapr_Rec.Mchktyp = 2
+				
+
+				R_Badapr_Rec.Oldab        := NULL; --'第一式/第二式';
+				R_Badapr_Rec.Oldaamt      := 0; --'第一式金額(勞保給付金額)';
+				R_Badapr_Rec.Oldbamt      := 0; --'第二式金額(勞保給付金額)';
+				R_Badapr_Rec.Qualcount    := 0; --'符合眷屬(遺屬)人數';
+				R_Badapr_Rec.Annuamt      := nvl(R_Source_Baappbase_Rec.Annuamt,
+													0); --'累計已領年金金額';
+				R_Badapr_Rec.Lecomamt     := 0; --'己扣失能金額';
+				R_Badapr_Rec.Oldextrarate := 0; --(老年、遺屬)展延/減額比率
+				V_Key_Baappbaseid         := R_Source_Baappbase_Rec.Baappbaseid; --給付主檔資料編號
+
+				If R_Source_Baappbase_Rec.Seqno = '0000' Then
+					V_Str              := 'Y';
+					V_Out_Temp_Cnt     := 0;
+					R_Badapr_Rec.Seqno := R_Source_Baappbase_Rec.Seqno;
+					R_Baappbase_Rec    := R_Source_Baappbase_Rec; --供update_data使用
+					Update_Data;
+				Else
+					-- 新增眷屬資料
+					V_Out_Temp_Cnt     := V_Out_Temp_Cnt + 1;
+					R_Badapr_Rec.Seqno := R_Source_Baappbase_Rec.Seqno;
+					R_Baappbase_Rec    := R_Source_Baappbase_Rec; --供update_data使用
+					Update_Data;
+					If V_Out_Temp_Cnt <> 1 Then
+						R_Badapr_Rec.pamts := 0; --僅第一筆眷屬寫入全數金額
+					end if;
+				End If;
+
+				--取得cipb;
+				V_Key_Brdate := R_Baappbase_Rec.Evtbrdate;
+				v_key_name   := R_Baappbase_Rec.evtname;
+
+				/*If  r_bansf_rec_rec.Adwkmk='2' Then
+					V_Key_Intyp:= 'V';
+				Else
+					V_Key_Intyp:= 'L';
+				END IF;   */
+
+				P_READ_CIPB;
+				R_BADAPR_REC.HBEDMK := R_Cipb_Rec.Hbedmk; --'年金施行前有無保險年資';
+				R_BADAPR_REC.NITRMY := R_CIPB_REC.NITRMY; --'勞保投保年資(年-年金制)';
+				R_BADAPR_REC.NITRMM := R_CIPB_REC.NITRMM; --'勞保投保年資(月-年金制)';
+
+				If V_Str = 'Y' Then
+					--有存在seqno=0000才寫入眷屬
+
+					if  R_Badapr_Rec.Evtype = '1'  then
+						V_Str = 3
+					if  R_Badapr_Rec.Evtype = '2'  then
+						V_Str = 4
+					if  R_Badapr_Rec.Evtype = '3'  then
+						V_Str = 1
+					else 
+						V_Str = 2
+
+					/*不分給付種類(36除外) 皆用BAAPPBASE.APITEM申請項目判斷
+					項目=7,8  退休條件給"2"-領取失能年金及老年年金中途死亡者
+					項目=9    退休條件給"1"-符合退休條件者
+					其餘      退休條件給"0"-尚未符合退休條件者
+					但給付種類=36 給 " "-空白*/
+
+					if R_Badapr_Rec.Payno = '36' then
+						V_Cat = null
+					else 
+					 	V_Cat = 0
+
+					If V_Out_Temp_Cnt = 0 Then
+						--僅seqno=0000才新增至年金統計檔
+						V_Out_Cnt := V_Out_Cnt + 1;
+						Insert Into bansf
+
+						IF R_Source_Baappbase_Rec.Evtdiedate IS NOT NULL AND
+								   Substr(R_Badapr_Rec.Payno, 1, 1) = '3' THEN
+							Insert Into bansf_TEMP
+
+
+						IF R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+									--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+							V_Out_Cnt := V_Out_Cnt + 1;
+							Insert Into bansf
+
+					If R_Badapr_Rec.Nachgmk In ('A', 'B') And
+						F_Data(R_Badapr_Rec.Apno, R_Badapr_Rec.Payym) > 0 Then
+						--當存在普職互改註記時,
+						--找尋同給付月份,且Nachgmk為NULL的資料,當資料不存在,則異常資料建入badapr_ref_errl
+						Insert Into Badapr_Ref_Errl
+							Select R_Badapr_Rec.Apno,
+									R_Badapr_Rec.Payym,
+									V_Str,
+									R_Badapr_Rec.Pamts,
+									'為普職註記,但找不到正常本月資料'
+								From Dual;
+					End If;
+					Insert Into Badapr_Ref Values R_Badapr_Rec;
+					If R_Badapr_Rec.Nachgmk In ('A', 'B') Then
+						--當存在普職互改註記時,則新增一筆負值資料,並變更EVTYPE
+						--   Dbms_Output.Put_Line('3.2'||';'||R_Badapr_Rec.Payym||';'||R_Badapr_Rec.Seqno);
+						R_Badapr_Rec.Paycnt := R_Badapr_Rec.Paycnt * -1;
+						R_Badapr_Rec.Pamts  := R_Badapr_Rec.Pamts * -1;
+						R_Badapr_Rec.Evtype := V_Str;
+						INSERT INTO BADAPR_REF VALUES R_BADAPR_REC;
+					End If;
+
+				V_STR := 'Y'; --中間有更動,回寫為正常值
+
+			迴圈結束
+
+			IF V_STR = 'N' THEN
+				--資料不存在badapr,baappbase,55,37,38,39重找baappbase
+				R_Badapr_Rec.UBNO    := r_bansf_rec_rec.UBNO; --保險證號
+				R_Badapr_Rec.Injcl   := R_Bansf_Rec_Rec.Injcl; --失能等級 (身心障礙等級)
+				R_Badapr_Rec.Seqno   := '0000'; --序號
+				R_Badapr_Rec.Age     := F_Year(Substr(R_Badapr_Rec.Appdate,
+														1,
+														6),
+												Substr(R_Badapr_Rec.Evtbrdate,
+														1,
+														6)); --'申請年月-事故者出生年月=年齡';
+				R_Badapr_Rec.PWAGE   := nvl(r_bansf_rec_rec.PWAGE, 0); --平均薪資
+				R_Badapr_Rec.APPDATE := r_bansf_rec_rec.APPDATE; --申請日期
+
+				--原excel不存在的欄位如下:
+				R_Badapr_Rec.Paydate := R_Bansf_Rec_Rec.Issuym || '01'; --核付日期
+				If R_Badapr_Rec.Ubno Is Not Null Then
+					V_Key_Ubno := R_Badapr_Rec.Ubno;
+					P_Read_Caub;
+					R_Badapr_Rec.Ubtype := R_Caub_Rec.Ubtype; --'單位類別';
+					R_Badapr_Rec.Inds   := R_Caub_Rec.Inds; --'小業別';
+					R_Badapr_Rec.Hincd  := Substr(R_Caub_Rec.Hincd,
+													1,
+													2); --'職災代號';
+					R_Badapr_Rec.Idsta  := R_Caub_Rec.Idsta; --'大業別';
+					R_Badapr_Rec.Area   := R_Caub_Rec.Area; --'地區別';
+					R_Badapr_Rec.Clsqty := R_Caub_Rec.Prsno_B; --'月末人數';
+				End If;
+
+				R_Badapr_Rec.EVTNATIONTPE := 'C'; --被保險人國籍別
+				R_Badapr_Rec.INJNAME      := 'Z999999'; --傷病名稱(國際疾病代碼)
+				R_Badapr_Rec.INJDP        := 'Z99'; --障礙(失能部位)
+				R_BADAPR_REC.INJPART      := 'Z99'; --受傷部位
+				R_Badapr_Rec.MEDIUM       := 'Z99'; --媒介物
+				R_BADAPR_REC.APITEM       := 'Z'; --申請項目
+				R_Badapr_Rec.CHKKIND      := 'N'; --"符合離職退保後職災殘廢給付職業病種類(Y/N)"                                                 ;
+				R_Badapr_Rec.Wage         := 0; --投保薪資
+				R_Badapr_Rec.Adwkmk       := nvl(r_bansf_rec_rec.adwkmk,
+													'1'); --加職註記
+				R_Badapr_Rec.Evtname      := Null; --事故者姓名
+				--R_Badapr_Rec.MCHKTYP       :='Z'                           ;  --月核案件類別
+
+				if R_Badapr_Rec.FIRSTPAY = '1' then
+					R_Badapr_Rec.Mchktyp := '1'
+				if R_Badapr_Rec.FIRSTPAY = '0' then
+					R_Badapr_Rec.Mchktyp := '2'
+				if R_Badapr_Rec.Suprecmk = 'C' then
+					R_Badapr_Rec.Mchktyp := '5'
+				Else
+					R_Badapr_Rec.Mchktyp := '2'
+
+				V_Str2 := Null; --年齡組別
+
+				v_Evtdiedate = R_Bansf_Rec_Rec.EDATE; --事故者死亡日期
+
+				--遺屬年金：計算至被保險人死亡年月，以死亡年月-事故者出生日期,取年
+				R_Badapr_Rec.Age             := F_Year(Substr(v_Evtdiedate,
+													1,
+													6),
+											Substr(R_Bansf_Rec_Rec.Evtbrdate,
+													1,
+													6)); --'核付年齡';
+
+				if R_Badapr_Rec.Evtbrdate Is Null then
+				
+					if R_Badapr_Rec.Evtbrdate Is Null And
+							R_Bansf_Rec_Rec.Evtbrdate Is Not Null and
+							R_Badapr_Rec.Paykind <> 'S' THEN
+						
+						R_Badapr_Rec.Evtbrdate := R_Bansf_Rec_Rec.Evtbrdate; --事故者出生日期
+
+						--失能及老年年金：計算至核付年月，以核付年月－出生年月,取年
+							V_Age := F_Year(Substr(R_Badapr_Rec.paydate,
+													1,
+													6),
+											Substr(R_Badapr_Rec.Evtbrdate,
+													1,
+													6)); --'核付年齡';
+
+				V_Str2     := F_Agetype(V_Age); --年齡組別
+				R_CIPB_REC := NULL;
+
+				IF R_BADAPR_REC.PAYNO = '36' THEN
+					R_BADAPR_REC.NITRMY := r_bansf_rec_rec.NITRMY; --勞保投保年資(年-年金制)
+					R_BADAPR_REC.NITRMM := R_BANSF_REC_REC.NITRMM; --勞保投保年資(月-年金制)
+					V_KEY_NBAPNO        := R_BANSF_REC_REC.NBAPNO;
+					R_BADAPR_REC.APITEM := '0'; --申請項目
+					P_READ_NBAAPPBASE;
+
+					IF sw_found = TRUE THEN
+						R_BADAPR_REC.EDATE     := R_NBAPPBASE_REC.EVTDT; --事故日期;
+						R_BADAPR_REc.EVTBRDATE := R_NBAPPBASE_REC.EVTEEBIRT; --生日;
+						R_BADAPR_REC.EVTIDNNO  := R_NBAPPBASE_REC.EVTIDNNO; -- 身份證號;
+						R_Badapr_Rec.Evtname   := R_NBAPPBASE_REC.Evteename; --'事故者姓名';
+					ELSE
+						R_BADAPR_REc.EVTBRDATE := r_bansf_rec_rec.EVTBRDATE; --生日;
+						R_BADAPR_REC.EVTIDNNO  := r_bansf_rec_rec.EVTIDNNO; -- 身份證號;
+						--     R_Badapr_Rec.Evtname       :=r_bansf_rec_rec.Evtname;     --'事故者姓名';
+					END IF;
+
+					--36  20130320
+					V_Age := F_Year(Substr(R_Badapr_Rec.paydate, 1, 6),
+									Substr(R_Badapr_Rec.Evtbrdate, 1, 6)); --'核付年齡';
+
+
+					if SUBSTR(R_BADAPR_REC.EVTIDNNO, 2, 1) = 1 then
+						R_BADAPR_REC.SEX = 1
+					if =2
+						R_BADAPR_REC.SEX = 2
+					else 
+						R_BADAPR_REC.SEX = Z
+						
+
+					V_Key_Idn    := R_BADAPR_REC.EVTIDNNO;
+					v_key_name   := R_Badapr_Rec.Evtname;
+					V_Key_Intyp  := 'L';
+					v_key_brdate := R_BADAPR_REc.EVTBRDATE;
+
+					P_READ_CIPB;
+
+					--36國併勞：計算申請日-生日       20130320
+					R_Badapr_Rec.AGE    := F_YEAR(SUBSTR(R_BADAPR_REC.appdate,
+															1,
+															6),
+													SUBSTR(R_BADAPR_REc.EVTBRDATE,
+															1,
+															6)); --'年齡';
+
+					R_BADAPR_REC.HBEDMK := R_CIPB_REC.HBEDMK; --'年金施行前有無保險年資';
+					R_BADAPR_REC.NITRMY := R_CIPB_REC.NITRMY; --勞保投保年資(年-年金制)
+					R_BADAPR_REC.NITRMM := R_CIPB_REC.NITRMM; --勞保投保年資(月-年金制)
+				ELSE
+					P_READ_CIPB;
+					R_BADAPR_REC.HBEDMK := R_CIPB_REC.HBEDMK; --'年金施行前有無保險年資';
+					R_BADAPR_REC.NITRMY := R_CIPB_REC.NITRMY; --勞保投保年資(年-年金制)
+					R_BADAPR_REC.NITRMM := R_CIPB_REC.NITRMM; --勞保投保年資(月-年金制)
+				END IF;
+
+				R_Badapr_Rec.OLDAB         := NULL; --第一式/第二式
+				R_Badapr_Rec.OLDAAMT       := 0; --第一式金額(勞保給付金額)
+				R_Badapr_Rec.OLDBAMT       := 0; --第二式金額(勞保給付金額)
+				R_Badapr_Rec.OLDEXTRARATE  := 0; --(老年、遺屬)展延/減額比率
+				R_Badapr_Rec.QUALCOUNT     := 0; --符合眷屬(遺屬)人數
+				R_Badapr_Rec.Oldrate       := 0; --加計比率
+				R_Badapr_Rec.CLOSECAUSE    := 'Z9'; --結案原因
+				R_BADAPR_REC.ANNUAMT       := 0; --累計已領年金金額
+				R_Badapr_Rec.Cutamt        := 0; --應扣失能金額
+				R_Badapr_Rec.LECOMAMT      := 0; --己扣失能金額
+				R_Badapr_Rec.Benids        := Null; --受益人社福識別碼
+				R_Badapr_Rec.BENAGE        := 0; --受益人單齡
+				R_Badapr_Rec.BENSEX        := 'Z'; --受益人性別
+				R_Badapr_Rec.Bennationtyp  := 'C'; --受益人國籍別
+				R_Badapr_Rec.Bennationcode := null; --受益人國籍
+				R_Badapr_Rec.Benevtrel     := Null; --受益人與事故者關係
+				V_Bdate                    := F_Bdate(R_Badapr_Rec.Apno,
+														R_Badapr_Rec.Seqno,
+														R_Badapr_Rec.Payym,
+														R_Badapr_Rec.Payno);
+				V_EDATE                    := '00000';
+
+				V_OUT_CNT := V_OUT_CNT + 1;
+
+				Insert Into bansf
+
+				IF SUBSTR(R_Badapr_Rec.Payno, 1, 1) = '3' AND nvl(v_Evtdiedate,' ') <> ' ' THEN
+					Insert Into bansf_TEMP
+
+
+					Insert Into Badapr_Ref Values R_Badapr_Rec;
+
+				IF (Substr(R_Badapr_Rec.Payno, 1, 1) = '5' Or
+					R_Badapr_Rec.Payno In ('35', '37', '38')) and
+					f_bansfcount(r_badapr_rec.Apno,
+								r_badapr_rec.Payym,
+								R_Badapr_Rec.Suprecmk) > 0 then
+
+					p_read_baappbase;
+					
+					IF sw_found = true THEN
+						R_Badapr_Rec.Seqno := '0000'; --'序號';
+						Update_Data;
+
+						UPDATE BANSF
+
+						IF R_Baappbase_Rec.EVTDIEDATE is NOT NULL THEN
+							UPDATE BANSF_TEMP
+								SET EVTDIEDATE = R_Baappbase_Rec.EVTDIEDATE
+								Where Apno = r_badapr_rec.Apno
+								And Payym = r_badapr_rec.Payym
+								and ((R_Badapr_Rec.Suprecmk is null and
+									code is null) or
+									code = R_Badapr_Rec.Suprecmk);
+						END IF;
+
+
+	V_Payym  := R_Badapr_Rec.Payym;
+	V_Iisuym := R_Badapr_Rec.Issuym;
+	V_APNO   := R_Badapr_Rec.APNO;
+	If Mod(V_Out_Cnt, 50000) = 0 Then
+		Commit;
+	END IF;
+
+迴圈結束
