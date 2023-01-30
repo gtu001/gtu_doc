@@ -11,3 +11,13 @@ function half2full(str) {
   }
   return res.join('');
 }
+
+
+function chineseToUnicode(str) {
+  let len = str.length;
+  let res = [];
+  for (let i = 0; i < len; i++) {
+    let c = str.charCodeAt(i);
+    console.log("\u" + c.toString(16));
+  }
+}
