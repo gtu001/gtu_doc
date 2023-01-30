@@ -1,0 +1,13 @@
+function half2full(str) {
+  let len = str.length;
+  let res = [];
+  for (let i = 0; i < len; i++) {
+    let c = str.charCodeAt(i);
+    if (c >= 0x21 && c <= 0x7e) {
+      res.push(String.fromCharCode(c + 65248));
+    } else {
+      res.push(str[i]);
+    }
+  }
+  return res.join('');
+}
