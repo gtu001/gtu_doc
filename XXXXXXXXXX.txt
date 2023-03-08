@@ -1,0 +1,100 @@
+
+
+
+       /*         
+       select t.BPARTNER_TT , t.LASTNAME_TT  from PC_CUSTOMER t 
+           where 1=1 
+           and t.IS_DELETE = 0 
+           and t.BPARTNER_TT = '0000967041' 
+           and t.PARENT_ID = '2908537387'
+           
+       select AGENT_ID from POLICY_CHECK t where t.PK_ID = '2908537387' --00000000000000038019
+            
+	mulAgCode = POLICY_CHECK.AGENT_ID
+	customerBP = PC_CUSTOMER.BPARTNER_TT
+	mulFlg = 'X'
+
+	if mulAgCode is empty then
+		mulAgCode = '00000000000000038019'
+                mulFlg = ''
+        end if
+*/
+
+		SELECT DISTINCT
+			coverage.POLICYNR_TT
+			, coverage.COVERAGE_NUMBER
+			, coverage.COVERAGE_EFFECTIVE_DATE
+			, coverage.COVERAGE_SHORT_NAME
+			, sub_coverage.COVERAGENR_T
+			, sub_coverage.POLICYHOLDER
+			, sub_coverage.INSURED_PERS
+			, holder_link_prospect.MAIN_BPARTNER_TT AS HOLDER_PROSPECT
+			, insured_link_prospect.MAIN_BPARTNER_TT AS INSURED_PROSPECT
+			, sub_coverage.DURATION
+			, sub_coverage.EFFECTIVE_DT
+			, sub_coverage.AGE_PHD
+			, sub_coverage.AGE_INS
+			, sub_coverage.COV_PRODUCT_MODULE_ID
+			, sub_coverage.COVCPCO_PRODUCT_MODULE_ID
+			, sub_coverage.VALUE_ORIGIN
+			, sub_coverage.VALUE AS VALUE_NEW
+			, sub_coverage.CURRENCY
+			, sub_coverage.CURRENCY_ORIGIN
+			, MAPPING.MA_CODE AS CODE_3MA
+			, MAPPING.SUBCOV_FLAG
+			, MAPPING.SUBCOV_PICKUP_MODE
+			, MAPPING.TRANSFERMATION_TYPE
+			, DEF.ROLE
+			, DEF.PARENT
+			, DEF.MEASUREOFUNIT_CODE
+			, TRANS.FACTORMIN1
+			, TRANS.FACTORMIN2
+			, TRANS.FACTORMAX1
+			, TRANS.FACTORMAX2
+			, TRANS.LIMITAMOUNT
+			, TRANS.FORMULACODE
+			, TRANS.TOTALIZECODE
+			, TRANS.MULTIPLYVPU
+			, :customerBP AS SEARCH_BP
+        FROM "QUO_SYS"."NSL_3MA_TEST_nsl.ba.3ma/ZSLPAD_V_3MA_PFO_POLICY_DETAIL"
+            --因為會出現錯誤, 故依照錯誤訊息的順序排
+            (PLACEHOLDER."$$IP_AGENT_CODE$$"   => :mulAgCode,
+             PLACEHOLDER."$$IP_POLICYHOLDER$$" => :customerBP,
+             PLACEHOLDER."$$IP_MULTBP_FLG$$"   => :mulFlg,
+             PLACEHOLDER."$$IP_INSURED$$"      => :customerBP
+            ) coverage
+		LEFT JOIN "NSL_3MA_TEST_nsl.ba.3ma/ZSLPAD_V_3MA_PARAMETER"
+            (PLACEHOLDER."$$IP_AGENT_CODE$$"   => :mulAgCode,
+             PLACEHOLDER."$$IP_POLICYHOLDER$$" => :customerBP,
+		     PLACEHOLDER."$$IP_MULTBP_FLG$$"   => :mulFlg,
+		     PLACEHOLDER."$$IP_INSURED$$"      => :customerBP
+		    ) sub_coverage
+		    ON coverage.COVERAGE_NUMBER = sub_coverage.COVERAGENR_T
+		LEFT JOIN PC_LINK_PROSPECT insured_link_prospect ON insured_link_prospect.PARENT_ID = :IN_POLICYCHECK_PKID AND insured_link_prospect.IS_DELETE = '0' AND insured_link_prospect.CUSTOMER_BP = sub_coverage.INSURED_PERS
+		LEFT JOIN PC_LINK_PROSPECT holder_link_prospect ON holder_link_prospect.PARENT_ID = :IN_POLICYCHECK_PKID AND holder_link_prospect.IS_DELETE = '0' AND holder_link_prospect.CUSTOMER_BP = sub_coverage.POLICYHOLDER
+		LEFT JOIN NSL_SUBCOV_2_3MA_MAPPING MAPPING ON(sub_coverage.COV_PRODUCT_MODULE_ID = MAPPING.COVERAGE_PM_ID AND sub_coverage.COVCPCO_PRODUCT_MODULE_ID = MAPPING.SUBCOV_PM_ID)
+		INNER JOIN NSL_3MA_CODE_DEF DEF ON MAPPING.MA_CODE = DEF.MA_CODE
+		LEFT JOIN NSL_3MA_TRANS_FORMULA TRANS ON MAPPING.COVERAGE_PM_ID = TRANS.COVERAGE_PM_ID
+			AND MAPPING.SUBCOV_PM_ID = TRANS.SUBCOV_PM_ID
+			AND MAPPING.MA_CODE = TRANS.MA_CODE
+		WHERE 1=1
+			AND (YEAR(TO_DATE(sub_coverage.EFFECTIVE_DT, 'YYYYMMDD')) >= (year(CURRENT_TIMESTAMP)-1))
+			AND MAPPING.MA_CODE IS NOT NULL
+			AND (sub_coverage.POLICYHOLDER = :customerBP OR sub_coverage.INSURED_PERS = :customerBP)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
