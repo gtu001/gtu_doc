@@ -1,5 +1,0 @@
-sap_hana_毫秒差距計算
-
-
-
-NANO100_BETWEEN(t.start_ts, t.end_ts)/ 10000000
