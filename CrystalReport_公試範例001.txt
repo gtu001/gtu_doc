@@ -1,0 +1,128 @@
+
+=================================================================
+//取得金額 Ex : 10,000~15,000  看是抓第幾個
+
+GetValueFromString
+
+Function (StringVar itemValue1, NumberVar index) (
+    Local NumberVar find1 := -1;
+    find1 := InStr(itemValue1, "~");
+
+    if find1 = 0 Then (
+        itemValue1 := Replace(itemValue1, ',', '');
+        itemValue1
+    )
+    Else (
+        itemValue1 := split(itemValue1, "~")[index];
+        itemValue1 := Replace(itemValue1, ',', '');
+        itemValue1
+    )
+);
+
+
+=================================================================
+//五個欄位加總 Ex : 呈現為 10000~15000
+
+Local NumberVar val1 := 0;
+Local NumberVar val2 := 0;
+
+val1 := val1 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_001}, 1));
+val2 := val2 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_001}, 2));
+
+val1 := val1 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_002}, 1));
+val2 := val2 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_002}, 2));
+
+val1 := val1 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_003}, 1));
+val2 := val2 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_003}, 2));
+
+val1 := val1 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_004}, 1));
+val2 := val2 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_004}, 2));
+
+val1 := val1 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_005}, 1));
+val2 := val2 + ToNumber(GetValueFromString({PC_CR_REPORTLIFEBENEFIT.ITEM_005}, 2));
+
+if val1 = val2 Then (
+    ToText(val1)
+)
+Else (
+    ToText(val1) & '~' & ToText(val2)
+);
+
+
+=================================================================
+
+
+
+
+
+
+// 住院病房費限額 = C2_002 - C2_009 = ITEM_024 - ITEM_138
+
+Local StringVar itemValue24 := '';
+Local StringVar itemValue138 := '';
+
+If Not(IsNull({PC_CR_REPORTLIFEBENEFIT.ITEM_024})) Then (
+    itemValue24 := {PC_CR_REPORTLIFEBENEFIT.ITEM_024}
+);
+
+If Not(IsNull({PC_CR_REPORTLIFEBENEFIT.ITEM_138})) Then (
+    itemValue138 := {PC_CR_REPORTLIFEBENEFIT.ITEM_138}
+);
+
+ReimbursementBenefit(itemValue24, itemValue138);
+
+
+
+=================================================================
+
+Function(StringVar itemValue1, StringVar itemValue2) (
+    Local StringVar item := '';
+    Local NumberVar item1From := -1;
+    Local NumberVar item1To := -1;
+    Local NumberVar item2From := -1;
+    Local NumberVar item2To := -1;
+
+    If itemValue1 = '' Or itemValue1 = '0' Then (
+        ''
+    )
+    Else (
+        If itemValue2 <> '' Then (
+            item := Replace(itemValue2, ',', '');
+
+            If InStr(item, '~') > 0 Then (
+                item2From := ToNumber(Left(item, InStr(item, '~') - 1));
+                item2To := ToNumber(Right(item, Length(item) - InStr(item, '~')));
+            )
+            Else (
+                item2From := ToNumber(item);
+                item2To := ToNumber(item);
+            )
+        );
+
+        If item2To < 0 Then (
+            itemValue1
+        )
+        Else (
+            item := Replace(itemValue1, ',', '');
+
+            If InStr(item, '~') > 0 Then (
+                item1From := ToNumber(Left(item, InStr(item, '~') - 1));
+                item1To := ToNumber(Right(item, Length(item) - InStr(item, '~')));
+
+                If item1From = item1To Then (
+                    ToText(Abs(item1To - item2To), 0, ',', '.')
+                )
+                Else (
+                    ToText(Abs(item1From - item2From), 0, ',', '.') + '~' + ToText(Abs(item1To - item2To), 0, ',', '.')
+                )
+            )
+            Else (
+                item1To := ToNumber(item);
+
+                ToText(Abs(item1To - item2To), 0, ',', '.')
+            )
+        )
+    )
+);
+
+
